@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     console.log('Request body:', body);
-    
+
     const { wpm, accuracy, difficulty } = body;
     console.log('Parsed values:', { wpm, accuracy, difficulty });
 
@@ -26,21 +26,30 @@ export async function POST(request: NextRequest) {
 
     console.log('Created test result:', result);
     return NextResponse.json(result);
-  } catch (error) {
-    console.error('Error details:', {
-      message: error.message,
-      name: error.name,
-      code: error.code,
-      meta: error.meta,
-    });
-    return NextResponse.json(
-      { 
-        error: 'Failed to save test result',
+  } catch (error: unknown) {
+    // Type guard to safely access error properties
+    if (error instanceof Error) {
+      console.error('Error details:', {
         message: error.message,
-        code: error.code,
-      },
-      { status: 500 }
-    );
+        name: error.name,
+      });
+      return NextResponse.json(
+        {
+          error: 'Failed to save test result',
+          message: error.message,
+        },
+        { status: 500 }
+      );
+    } else {
+      console.error('Unknown error:', error);
+      return NextResponse.json(
+        {
+          error: 'Failed to save test result',
+          message: 'Unknown error occurred',
+        },
+        { status: 500 }
+      );
+    }
   }
 }
 
@@ -53,25 +62,35 @@ export async function GET() {
         wpm: true,
         accuracy: true,
         difficulty: true,
-        timestamp: true
+        timestamp: true,
       },
       orderBy: { timestamp: 'desc' },
       take: 10,
     });
     console.log('Fetched results:', results);
     return NextResponse.json(results);
-  } catch (error) {
-    console.error('Error details:', {
-      message: error.message,
-      name: error.name,
-      code: error.code,
-    });
-    return NextResponse.json(
-      { 
-        error: 'Failed to fetch test results',
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error('Error details:', {
         message: error.message,
-      },
-      { status: 500 }
-    );
+        name: error.name,
+      });
+      return NextResponse.json(
+        {
+          error: 'Failed to fetch test results',
+          message: error.message,
+        },
+        { status: 500 }
+      );
+    } else {
+      console.error('Unknown error:', error);
+      return NextResponse.json(
+        {
+          error: 'Failed to fetch test results',
+          message: 'Unknown error occurred',
+        },
+        { status: 500 }
+      );
+    }
   }
 }

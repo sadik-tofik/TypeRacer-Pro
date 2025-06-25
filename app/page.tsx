@@ -59,7 +59,6 @@ export default function Home() {
   const { toast } = useToast();
 
   const difficultyLevel = getDifficultyLevel(difficulty);
- 
   const fetchTestResults = useCallback(async () => {
     try {
       const response = await fetch('/api/test-results');  // Updated endpoint
