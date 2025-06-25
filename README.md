@@ -2,6 +2,16 @@
 
 A modern, feature-rich typing speed test application built with Next.js, shadcn/ui, and PostgreSQL.
 
+## 🚀 Live Demo
+
+[View on Vercel](https://type-racer-pro-sa.vercel.app)
+
+## 📸 Screenshots
+
+### Homepage
+![Homepage](https://github.com/sadik-tofik/)
+
+
 ## Features
 
 - **Real-time Typing Test**: Accurate WPM and accuracy tracking
