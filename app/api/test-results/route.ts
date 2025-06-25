@@ -27,12 +27,13 @@ export async function POST(request: NextRequest) {
     console.log('Created test result:', result);
     return NextResponse.json(result);
   } catch (error) {
-    console.error('Error details:', {
-      message: error.message,
-      name: error.name,
-      code: error.code,
-      meta: error.meta,
-    });
+  if (error instanceof Error) {
+    console.log(error.message);
+  } else {
+    console.log('Unknown error', error);
+  }
+}
+
     return NextResponse.json(
       { 
         error: 'Failed to save test result',
