@@ -15,8 +15,6 @@ import { DifficultySelector } from '@/components/difficulty-selector';
 import { CountdownTimer } from '@/components/countdown-timer';
 import { EnhancedTypingTest } from '@/components/enhanced-typing-test';
 import { AdPlaceholder } from '@/components/ad-placeholder';
-import { MultiplayerRace } from '@/components/multiplayer-race';
-import { AnimatedProgress } from '@/components/animated-progress';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { getRandomText, getDifficultyLevel } from '@/lib/typing-texts';
 import { soundManager } from '@/lib/sound-manager';
@@ -26,7 +24,7 @@ interface TestResult {
   wpm: number;
   accuracy: number;
   difficulty: string;
-  timestamp: Date;
+  timestamp: string; 
 }
 
 interface TestStats {
@@ -37,6 +35,7 @@ interface TestStats {
   incorrectChars: number;
   totalChars: number;
 }
+
 
 export default function Home() {
   const [gameState, setGameState] = useState<'setup' | 'playing' | 'completed'>('setup');
@@ -54,13 +53,88 @@ export default function Home() {
   const [testResults, setTestResults] = useState<TestResult[]>([]);
   const [showResults, setShowResults] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [showMultiplayer, setShowMultiplayer] = useState(false);
   const [showAd, setShowAd] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [showErrors, setShowErrors] = useState(true);
   const { toast } = useToast();
 
   const difficultyLevel = getDifficultyLevel(difficulty);
+ 
+  const fetchTestResults = useCallback(async () => {
+    try {
+      const response = await fetch('/api/test-results');  // Updated endpoint
+      if (response.ok) {
+        const data = await response.json();
+        setTestResults(data);
+      }
+    } catch (error) {
+      console.error('Error fetching test results:', error);
+    }
+  }, []);
+
+  const saveTestResult = async (result: Omit<TestResult, 'id' | 'timestamp'>) => {
+    try {
+      console.log('Sending test result to API:', result);
+      const response = await fetch('/api/test-results', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          wpm: result.wpm,
+          accuracy: result.accuracy,
+          difficulty: result.difficulty
+        }),
+      });
+  
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Server responded with:', response.status, errorText);
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const responseData = await response.json();
+      console.log('Test result saved successfully:', responseData);
+      
+      await fetchTestResults();
+    } catch (error) {
+      console.error('Error in saveTestResult:', error);
+    }
+  };
+
+// Add this effect to load results on mount
+useEffect(() => {
+  fetchTestResults();
+}, [fetchTestResults]);
+
+
+const handleTestComplete = (finalStats: TestStats) => {
+  setGameState('completed');
+  setIsTimerActive(false);
+  
+  const result = {
+    id : Date.now().toString(),
+    wpm: finalStats.wpm,
+    accuracy: finalStats.accuracy,
+    difficulty,  
+    timestamp: new Date().toISOString()
+  };
+
+  setTestResults(prev => [result, ...prev.slice(0, 9)]);
+  saveTestResult(result);  // Save to the database
+  setShowResults(true);
+  
+  // Play success sound
+  soundManager.playSound('success');
+  
+  // Show ad after test completion
+  setTimeout(() => setShowAd(true), 2000);
+  
+  toast({
+    title: "Test Complete! 🎉",
+    description: `${finalStats.wpm} WPM with ${finalStats.accuracy}% accuracy`,
+  });
+};
 
   const initializeTest = useCallback(() => {
     const text = getRandomText(difficulty);
@@ -100,32 +174,6 @@ export default function Home() {
     setIsTimerActive(true);
   };
 
-  const handleTestComplete = (finalStats: TestStats) => {
-    setGameState('completed');
-    setIsTimerActive(false);
-    
-    const result: TestResult = {
-      id: Date.now().toString(),
-      wpm: finalStats.wpm,
-      accuracy: finalStats.accuracy,
-      difficulty,
-      timestamp: new Date()
-    };
-
-    setTestResults(prev => [result, ...prev.slice(0, 9)]);
-    setShowResults(true);
-    
-    // Play success sound
-    soundManager.playSound('success');
-    
-    // Show ad after test completion
-    setTimeout(() => setShowAd(true), 2000);
-    
-    toast({
-      title: "Test Complete! 🎉",
-      description: `${finalStats.wpm} WPM with ${finalStats.accuracy}% accuracy`,
-    });
-  };
 
   const handleTimeUp = () => {
     setGameState('completed');
@@ -185,16 +233,6 @@ export default function Home() {
             
             <div className="flex items-center space-x-4">
               <ThemeToggle />
-              
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setShowMultiplayer(true)}
-                className="hover:bg-blue-50 dark:hover:bg-blue-900 transition-colors"
-              >
-                <Users className="h-4 w-4 mr-2" />
-                Challenge Friend
-              </Button>
               
               <Dialog open={showSettings} onOpenChange={setShowSettings}>
                 <Button 
@@ -529,27 +567,39 @@ export default function Home() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-sm text-gray-600 dark:text-gray-400">Best WPM</span>
-                    <motion.span 
+                    <motion.span
                       key={bestWpm}
                       initial={{ scale: 1.2, color: '#10b981' }}
-                      animate={{ scale: 1, color: 'inherit' }}
-                      transition={{ duration: 0.5 }}
+                      animate={{ 
+                        scale: 1, 
+                        color: '#000000'  // or any other hex color
+                      }}
+                      transition={{ 
+                        duration: 0.5,
+                        color: { duration: 0.5 }  // Optional: separate timing for color
+                      }}
                       className="font-semibold"
                     >
-                      {bestWpm}
+                      {bestWpm}%
                     </motion.span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-sm text-gray-600 dark:text-gray-400">Best Accuracy</span>
-                    <motion.span 
+                    <motion.span
                       key={bestAccuracy}
                       initial={{ scale: 1.2, color: '#10b981' }}
-                      animate={{ scale: 1, color: 'inherit' }}
-                      transition={{ duration: 0.5 }}
+                      animate={{ 
+                        scale: 1, 
+                        color: '#000000'  // or any other hex color
+                      }}
+                        transition={{ 
+                        duration: 0.5,
+                       color: { duration: 0.5 }  // Optional: separate timing for color
+                      }}
                       className="font-semibold"
                     >
-                      {bestAccuracy}%
-                    </motion.span>
+                   {bestAccuracy}%
+                   </motion.span>
                   </div>
                 </CardContent>
               </Card>
@@ -557,14 +607,6 @@ export default function Home() {
           </div>
         </div>
       </main>
-
-      {/* Multiplayer Race Modal */}
-      <MultiplayerRace
-        isOpen={showMultiplayer}
-        onClose={() => setShowMultiplayer(false)}
-        currentText={currentText}
-        difficulty={difficulty}
-      />
 
       {/* Results Dialog */}
       <Dialog open={showResults} onOpenChange={setShowResults}>
