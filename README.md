@@ -69,21 +69,19 @@ Open [http://localhost:3000](http://localhost:3000) to view the application.
 The application uses three main models:
 
 - **TestResult**: Stores individual test results with WPM and accuracy
-- **User**: User management (optional)
-- **Leaderboard**: Global leaderboard entries
+
 
 ## API Routes
 
 - `/api/test-results` - POST/GET test results
-- `/api/leaderboard` - POST/GET leaderboard entries
+
 
 ## Ad Integration
 
 The application includes strategic ad placements:
 
-1. **Leaderboard Banner** (top of page)
-2. **Sidebar Unit** (right sidebar)
-3. **Post-test Popup** (after completing a test)
+1. **Sidebar Unit** (right sidebar)
+2. **Post-test Popup** (after completing a test)
 
 All ad spaces are Google AdSense ready with fallback placeholders.
 
