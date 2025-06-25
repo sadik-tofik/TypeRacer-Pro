@@ -11,8 +11,17 @@ A modern, feature-rich typing speed test application built with Next.js, shadcn/
 ### Homepage
 
 ![Homepage](https://github.com/sadik-tofik/TypeRacer-Pro/blob/main/public/assets/screenshots/home_light.png)
+
+### Dark Mode
+
 ![Dark Mode](https://github.com/sadik-tofik/TypeRacer-Pro/blob/main/public/assets/screenshots/home_dark.png)
-![Typing Challenge](https://github.com/sadik-tofik/blob/main/TypeRacer-Pro/public/assets/screenshots/typing_challenge.png)
+
+### Challenge
+
+![Typing Challenge](https://github.com/sadik-tofik/TypeRacer-Pro/blob/main/public/assets/screenshots/typing_challenge.png)
+
+### Results
+
 ![Result](https://github.com/sadik-tofik/TypeRacer-Pro/blob/main/public/assets/screenshots/results.png)
 
 
