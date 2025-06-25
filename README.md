@@ -2,6 +2,16 @@
 
 A modern, feature-rich typing speed test application built with Next.js, shadcn/ui, and PostgreSQL.
 
+## 📸 Screenshots
+
+### Homepage
+
+![Homepage](https://github.com/sadik-tofik/TypeRacer-Pro/public/assets/screenshots/home_light.png)
+![Dark Mode](https://github.com/sadik-tofik/TypeRacer-Pro/public/assets/screenshots/home_dark.png)
+![Typing Challenge](https://github.com/sadik-tofik/TypeRacer-Pro/public/assets/screenshots/typing_challenge.png)
+![Result](https://github.com/sadik-tofik/TypeRacer-Pro/public/assets/screenshots/results.png)
+
+
 ## Features
 
 - **Real-time Typing Test**: Accurate WPM and accuracy tracking
@@ -33,7 +43,7 @@ A modern, feature-rich typing speed test application built with Next.js, shadcn/
 1. Clone the repository:
 ```bash
 git clone https://github.com/yourusername/typeracer-pro.git
-cd typeracer-pro
+
 ```
 
 2. Install dependencies:
