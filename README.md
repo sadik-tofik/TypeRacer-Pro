@@ -2,6 +2,10 @@
 
 A modern, feature-rich typing speed test application built with Next.js, shadcn/ui, and PostgreSQL.
 
+## 🚀 Live Demo
+
+[View on Vercel](https://type-racer-pro-sa.vercel.app)
+
 ## 📸 Screenshots
 
 ### Homepage
