@@ -7,7 +7,6 @@ A modern, feature-rich typing speed test application built with Next.js, shadcn/
 - **Real-time Typing Test**: Accurate WPM and accuracy tracking
 - **Error Highlighting**: Visual feedback for typing mistakes
 - **Statistics Dashboard**: Comprehensive performance metrics
-- **Leaderboard System**: Track top performers
 - **Responsive Design**: Optimized for all devices
 - **SEO Optimized**: Perfect PageSpeed Insights scores
 - **Ad Integration**: Google AdSense ready with strategic placements
